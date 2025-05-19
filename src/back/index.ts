@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 
+import { broadcastCreateGame } from './src/game';
 import { broadcastRoomUpdate } from './src/room';
 import { handleMessage } from './src/websocket';
 import type { ErrorResponse, IncomingMessage } from './types/types';
@@ -20,13 +21,25 @@ const createServer = (port: number) => {
         const payload: IncomingMessage = JSON.parse(data);
         logCommand(payload, 'incoming');
 
-        const response = await handleMessage(socket, payload);
+        const response = await handleMessage(socket, payload, server);
         if (response) {
           socket.send(JSON.stringify(response));
           logCommand(response, 'outgoing');
 
           if (response.type === 'reg') {
             broadcastRoomUpdate(server);
+          }
+
+          if (
+            payload.type === 'add_user_to_room' &&
+            response.type === 'update_room'
+          ) {
+            broadcastCreateGame(
+              typeof payload.data === 'string'
+                ? JSON.parse(payload.data).indexRoom
+                : payload.data.indexRoom,
+              server,
+            );
           }
         }
       } catch (error) {

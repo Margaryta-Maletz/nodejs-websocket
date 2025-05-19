@@ -1,6 +1,8 @@
 import type { WebSocket } from 'ws';
+import type { WebSocketServer } from 'ws';
 
 import type { IncomingMessage, OutgoingResponse } from '../types/types';
+import { handleGameMessage } from './game';
 import { handlePlayerMessage } from './player';
 import { handleRoomMessage } from './room';
 
@@ -10,10 +12,11 @@ const getData = (message: IncomingMessage | OutgoingResponse) =>
   typeof message.data === 'string' ? JSON.parse(message.data) : message.data;
 
 export async function handleMessage(
-  ws: WebSocket,
+  socket: WebSocket,
   message: IncomingMessage,
-): Promise<OutgoingResponse> {
-  const playerName = connectedPlayers.get(ws);
+  server: WebSocketServer,
+): Promise<OutgoingResponse | null> {
+  const playerName = connectedPlayers.get(socket);
 
   switch (message.type) {
     case 'reg': {
@@ -21,7 +24,7 @@ export async function handleMessage(
 
       const { name, error } = getData(response);
       if (!error) {
-        connectedPlayers.set(ws, name);
+        connectedPlayers.set(socket, name);
       }
 
       return response;
@@ -41,6 +44,11 @@ export async function handleMessage(
       }
 
       return handleRoomMessage(message, playerName);
+    }
+
+    case 'add_ships': {
+      handleGameMessage(socket, message, server);
+      return null;
     }
 
     default:

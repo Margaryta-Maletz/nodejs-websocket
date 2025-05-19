@@ -8,7 +8,7 @@ import type {
 import type { IncomingMessage } from '../types/types';
 import { logCommand } from '../utils/logger';
 
-const rooms: Record<string, { roomUsers: PlayerInRoom[] }> = {};
+export const rooms: Record<string, { roomUsers: PlayerInRoom[] }> = {};
 
 export function handleRoomMessage(
   message: IncomingMessage,

@@ -1,11 +1,14 @@
 export type IncomingMessage =
   | RegistrationRequest
   | CreateRoomRequest
-  | AddUserToRoom;
+  | AddUserToRoom
+  | AddShipsRequest;
 
 export type OutgoingResponse =
   | RegistrationResponse
   | RoomUpdateResponse
+  | CreateGameResponse
+  | StartGameResponse
   | ErrorResponse;
 
 export type RegistrationRequest = {
@@ -79,4 +82,75 @@ export type Room = {
 export type PlayerInRoom = {
   name: string;
   index: number | string;
+};
+
+export type CreateGameResponse = {
+  type: 'create_game';
+  data:
+    | {
+        idGame: number | string;
+        idPlayer: number | string;
+      }
+    | string;
+  id: number;
+};
+
+export type AddShipsRequest = {
+  type: 'add_ships';
+  data:
+    | {
+        gameId: string;
+        ships: Ship[];
+        indexPlayer: string;
+      }
+    | string;
+  id: number;
+};
+
+export type StartGameResponse = {
+  type: 'start_game';
+  data: string;
+  id: number;
+};
+
+export type ShipPosition = {
+  x: number;
+  y: number;
+};
+
+export type Ship = {
+  position: ShipPosition;
+  direction: boolean;
+  length: number;
+  type: 'small' | 'medium' | 'large' | 'huge';
+};
+
+export type Game = {
+  gameId: string;
+  players: Record<string, PlayerGameState>;
+  currentPlayerIndex: string;
+  winner?: string;
+};
+
+export type PlayerGameState = {
+  ships: Ship[];
+  board: string[][];
+  remainingShips: number;
+};
+
+export type Attack = {
+  gameId: string;
+  x: number;
+  y: number;
+  indexPlayer: string;
+};
+
+export type AttackResult = {
+  position: ShipPosition;
+  currentPlayer: string;
+  status: 'miss' | 'killed' | 'shot';
+};
+
+export type FinishResult = {
+  winPlayer: string;
 };
