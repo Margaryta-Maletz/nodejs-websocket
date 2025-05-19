@@ -5,8 +5,5 @@ export function logCommand(
   type: 'incoming' | 'outgoing',
 ): void {
   const timestamp = new Date().toISOString();
-  console.log(
-    `[${timestamp}] [${type.toUpperCase()}] `,
-    JSON.stringify(command, null, 2),
-  );
+  console.log(`[${timestamp}] [${type}] `, command.type, command.data);
 }

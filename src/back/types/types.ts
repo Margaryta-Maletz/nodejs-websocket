@@ -1,6 +1,12 @@
-export type IncomingMessage = RegistrationRequest;
+export type IncomingMessage =
+  | RegistrationRequest
+  | CreateRoomRequest
+  | AddUserToRoom;
 
-export type OutgoingResponse = RegistrationResponse | ErrorResponse;
+export type OutgoingResponse =
+  | RegistrationResponse
+  | RoomUpdateResponse
+  | ErrorResponse;
 
 export type RegistrationRequest = {
   type: 'reg';
@@ -41,4 +47,36 @@ export type ErrorResponse = {
         errorText: string;
       }
     | string;
+};
+
+export type CreateRoomRequest = {
+  type: 'create_room';
+  data: string;
+  id: number;
+};
+
+export type AddUserToRoom = {
+  type: 'add_user_to_room';
+  data:
+    | {
+        indexRoom: number | string;
+      }
+    | string;
+  id: number;
+};
+
+export type RoomUpdateResponse = {
+  type: 'update_room';
+  data: Room[] | string;
+  id: number;
+};
+
+export type Room = {
+  roomId: string;
+  roomUsers: PlayerInRoom[];
+};
+
+export type PlayerInRoom = {
+  name: string;
+  index: number | string;
 };

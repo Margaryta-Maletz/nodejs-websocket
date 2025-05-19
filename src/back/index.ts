@@ -1,5 +1,6 @@
 import { WebSocketServer } from 'ws';
 
+import { broadcastRoomUpdate } from './src/room';
 import { handleMessage } from './src/websocket';
 import type { ErrorResponse, IncomingMessage } from './types/types';
 import { logCommand } from './utils/logger';
@@ -23,6 +24,10 @@ const createServer = (port: number) => {
         if (response) {
           socket.send(JSON.stringify(response));
           logCommand(response, 'outgoing');
+
+          if (response.type === 'reg') {
+            broadcastRoomUpdate(server);
+          }
         }
       } catch (error) {
         console.error('Error processing message:', error);

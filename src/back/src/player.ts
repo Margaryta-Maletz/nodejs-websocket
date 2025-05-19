@@ -8,7 +8,6 @@ const players: Record<string, Player> = {};
 
 export function handlePlayerMessage(
   data: RegistrationRequestData,
-  id: number,
 ): RegistrationResponse {
   const { name, password } = data;
 
@@ -22,7 +21,7 @@ export function handlePlayerMessage(
         error: false,
         errorText: '',
       }),
-      id: id,
+      id: 0,
     };
   } else if (players[name].password !== password) {
     return {
@@ -33,7 +32,7 @@ export function handlePlayerMessage(
         error: true,
         errorText: 'Invalid password',
       }),
-      id: id,
+      id: 0,
     };
   } else {
     return {
@@ -44,7 +43,7 @@ export function handlePlayerMessage(
         error: false,
         errorText: '',
       }),
-      id: id,
+      id: 0,
     };
   }
 }
